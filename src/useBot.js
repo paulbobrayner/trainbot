@@ -5,8 +5,9 @@ export default function useBot() {
     const userMessage = { type: 'user', message };
 
     // if user mentions station we'll get a list of stations
+
     const regex = /(station)/g;
-    const match = message.match(regex);
+    const match = message.toLowerCase().match(regex);
 
     if (match) {
       const stationsResponse = await getStations();
