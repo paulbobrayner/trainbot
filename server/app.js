@@ -17,6 +17,8 @@ app.use(
 app.get('/api/trains/:station', async (req, res) => {
   const { station } = req.params;
 
+  // get all stations,
+
   try {
     const trainsResponse = await axios.get(
       `http://api.irishrail.ie/realtime/realtime.asmx/getStationDataByNameXML?StationDesc=${station}`
@@ -27,8 +29,15 @@ app.get('/api/trains/:station', async (req, res) => {
     });
 
     const trains = JSON.parse(trainsJSON);
-    const nextTrains = trains.ArrayOfObjStationData.objStationData.slice(0, 2);
+    const trainData = trains.ArrayOfObjStationData.objStationData;
+    if (!trainData) {
+      res
+        .status(200)
+        .send({ message: "Sorry I don't know how to answer that" });
+      return;
+    }
 
+    const nextTrains = trains.ArrayOfObjStationData.objStationData.slice(0, 2);
     res.status(200).send(nextTrains);
   } catch (e) {
     console.log('ERROR', e);

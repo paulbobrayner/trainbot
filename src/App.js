@@ -1,31 +1,31 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import useBot from './useBot';
 
 function App() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const { callBot } = useBot();
 
   function sendMessage(event) {
     event.preventDefault();
-    const messageData = { type: 'user', message };
-    setMessages([...messages, messageData]);
-    setMessage('');
+    callBot(message, messages, setMessages, setMessage);
   }
 
   function handleInput(event) {
     const { value } = event.target;
-
     setMessage(value);
   }
 
   function renderMessages() {
-    return messages.map((text) => {
+    console.log();
+    return messages.map((text, index) => {
       const { message, type } = text;
 
       if (type === 'user') {
-        return <UserMessage>{message}</UserMessage>;
+        return <UserMessage key={index}>{message}</UserMessage>;
       } else {
-        return <BotMessage>{message}</BotMessage>;
+        return <BotMessage key={index}>{message}</BotMessage>;
       }
     });
   }
@@ -34,10 +34,10 @@ function App() {
     <Wrap>
       <Header>Train bot</Header>
       <Chat>
-        <Messages> {renderMessages()}</Messages>
+        <Messages>{renderMessages()}</Messages>
         <InputWrap onSubmit={(event) => sendMessage(event)}>
           <Input
-            placeholder="Enter message here"
+            placeholder="Enter station name here"
             onChange={(event) => handleInput(event)}
             value={message}
           />
@@ -50,24 +50,41 @@ function App() {
 export default App;
 
 const Wrap = styled.div`
-  text-align: center;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.25rem;
-  text-align: center;
+  @media (min-width: 900px) {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.25rem;
+    text-align: center;
+  }
 `;
 
 const Chat = styled.div`
   background: #ece5dd;
+  width: 100%;
 
   @media (min-width: 900px) {
     width: 800px;
-    height: 75vh;
-    position: relative;
+    max-height: 580px;
+    overflow-y: scroll;
   }
+`;
+
+const Messages = styled.div`
+  padding: 45px 30px 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+  height: 100vh;
+  @media (min-width: 900px) {
+    padding: 30px 30px 20px;
+    min-height: 580px;
+    max-height: 580px;
+  }
+  overflow-y: scroll;
 `;
 
 const Header = styled.div`
@@ -113,15 +130,6 @@ const Input = styled.input`
   @media (min-width: 576px) {
     width: 65%;
   }
-`;
-
-const Messages = styled.div`
-  padding: 30px 30px 20px;
-  display: flex;
-  flex-direction: column;
-  bottom: 0;
-  margin-bottom: 60px;
-  width: 750px;
 `;
 
 const UserMessage = styled.div`
