@@ -22,6 +22,7 @@ export default function useBot() {
 
         const notice = { type: 'bot', message: 'List of available stations' };
         setMessages([...messages, userMessage, notice, ...stationList]);
+        setMessage('');
       }
       return;
     }

@@ -31,12 +31,12 @@ function App() {
 
   return (
     <Wrap>
-      <Header>Train bot</Header>
+      <Header>Dublin trains</Header>
       <Chat>
         <Messages>{renderMessages()}</Messages>
         <InputWrap onSubmit={(event) => sendMessage(event)}>
           <Input
-            placeholder="Enter station name here"
+            placeholder="Enter station name here or type 'stations' for a list"
             onChange={(event) => handleInput(event)}
             value={message}
           />
