@@ -14,10 +14,26 @@ app.use(
   })
 );
 
+app.get('/api/stations', async (req, res) => {
+  try {
+    const stationsResponse = await axios.get(
+      `http://api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D`
+    );
+    const stationsJSON = convert.xml2json(stationsResponse.data, {
+      compact: true,
+      spaces: 4,
+    });
+
+    const stations = JSON.parse(stationsJSON);
+    const stationData = stations.ArrayOfObjStation.objStation;
+    res.status(200).send(stationData);
+  } catch (e) {
+    console.log('ERROR', e);
+  }
+});
+
 app.get('/api/trains/:station', async (req, res) => {
   const { station } = req.params;
-
-  // get all stations,
 
   try {
     const trainsResponse = await axios.get(
@@ -37,7 +53,7 @@ app.get('/api/trains/:station', async (req, res) => {
       return;
     }
 
-    const nextTrains = trains.ArrayOfObjStationData.objStationData.slice(0, 2);
+    const nextTrains = trainData.slice(0, 2);
     res.status(200).send(nextTrains);
   } catch (e) {
     console.log('ERROR', e);

@@ -6,3 +6,8 @@ export const getTrains = async (station) => {
   const response = await axios.get(`${base}trains/${station}`);
   return response;
 };
+
+export const getStations = async () => {
+  const response = await axios.get(`${base}stations`);
+  return response;
+};

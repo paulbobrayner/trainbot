@@ -1,11 +1,32 @@
-import { getTrains } from './api';
+import { getTrains, getStations } from './api';
 
 export default function useBot() {
   const callBot = async (message, messages, setMessages, setMessage) => {
-    // analyse message for keywords - station
+    const userMessage = { type: 'user', message };
+
+    // if user mentions station we'll get a list of stations
+    const regex = /(station)/g;
+    const match = message.match(regex);
+
+    if (match) {
+      const stationsResponse = await getStations();
+      const { data, status } = stationsResponse;
+
+      if (status === 200) {
+        const stationList = data.map((station) => {
+          const { StationDesc } = station;
+          const name = StationDesc._text;
+          return { type: 'bot', message: name };
+        });
+
+        const notice = { type: 'bot', message: 'List of available stations' };
+        setMessages([...messages, userMessage, notice, ...stationList]);
+      }
+      return;
+    }
+
     const response = await getTrains(message);
     const { status, data } = response;
-    const userMessage = { type: 'user', message };
 
     if (status === 200) {
       if (data.message) {
@@ -17,7 +38,9 @@ export default function useBot() {
         setMessage('');
         return;
       }
-      const nextTrains = response.data.map((train) => {
+
+      // format data and add to message
+      const nextTrains = data.map((train) => {
         const { Schdepart, Destination } = train;
         const depart = Schdepart._text;
         const destination = Destination._text;
