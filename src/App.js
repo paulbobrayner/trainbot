@@ -18,7 +18,6 @@ function App() {
   }
 
   function renderMessages() {
-    console.log();
     return messages.map((text, index) => {
       const { message, type } = text;
 

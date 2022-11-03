@@ -13,6 +13,7 @@ export default function useBot() {
       const { data, status } = stationsResponse;
 
       if (status === 200) {
+        // format data and add to message
         const stationList = data.map((station) => {
           const { StationDesc } = station;
           const name = StationDesc._text;
